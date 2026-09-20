@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ task.title }} - ProjectFlow</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f6f8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .task-box,
+        .comment-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 9px 15px;
+            cursor: pointer;
+        }
+
+        .comment {
+            border-bottom: 1px solid #ddd;
+            padding: 12px 0;
+        }
+
+        .comment:last-child {
+            border-bottom: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>ProjectFlow</h1>
+
+
+    <!-- Task Details -->
+
+    <div class="task-box">
+
+        <h2>{{ task.title }}</h2>
+
+        <p>
+            {{ task.description }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            {{ task.get_status_display }}
+        </p>
+
+        <p>
+            <strong>Assigned to:</strong>
+
+            {% if task.assigned_to %}
+
+                {{ task.assigned_to.username }}
+
+            {% else %}
+
+                Not assigned
+
+            {% endif %}
+
+        </p>
+
+        {% if task.due_date %}
+
+            <p>
+                <strong>Due:</strong>
+                {{ task.due_date }}
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Add Comment -->
+
+    <div class="comment-box">
+
+        <h2>Add Comment</h2>
+
+        <form
+            method="POST"
+            action="{% url 'add_comment' task.id %}"
+        >
+
+            {% csrf_token %}
+
+            <textarea
+                name="text"
+                rows="4"
+                placeholder="Write your comment..."
+                required
+            ></textarea>
+
+            <br><br>
+
+            <button type="submit">
+                Add Comment
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Comments -->
+
+    <div class="comment-box">
+
+        <h2>Comments</h2>
+
+        {% for comment in comments %}
+
+            <div class="comment">
+
+                <strong>
+                    {{ comment.user.username }}
+                </strong>
+
+                <p>
+                    {{ comment.text }}
+                </p>
+
+                <small>
+                    {{ comment.created_at }}
+                </small>
+
+            </div>
+
+        {% empty %}
+
+            <p>
+                No comments yet.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <br>
+
+    <a href="{% url 'project_detail' task.project.id %}">
+        Back to Project Board
+    </a>
+
+</div>
+
+</body>
+
+</html>
+

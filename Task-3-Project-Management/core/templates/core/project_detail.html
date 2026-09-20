@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ project.name }} - ProjectFlow</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f6f8;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .project-info {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .members {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .board {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .column {
+            background: #e9ecef;
+            padding: 15px;
+            width: 32%;
+            min-height: 350px;
+            border-radius: 8px;
+        }
+
+        .column h2 {
+            text-align: center;
+        }
+
+        .task-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-card h3 {
+            margin-top: 0;
+        }
+
+        .status-form {
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 8px 14px;
+            cursor: pointer;
+        }
+
+        input,
+        select {
+            padding: 8px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        @media (max-width: 800px) {
+
+            .board {
+                flex-direction: column;
+            }
+
+            .column {
+                width: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <h1>ProjectFlow</h1>
+
+
+    <!-- PROJECT INFORMATION -->
+
+    <div class="project-info">
+
+        <h2>{{ project.name }}</h2>
+
+        <p>
+            {{ project.description }}
+        </p>
+
+        <p>
+            <strong>Project Owner:</strong>
+            {{ project.owner.username }}
+        </p>
+
+        <a href="{% url 'create_task' project.id %}">
+            <button>
+                Create New Task
+            </button>
+        </a>
+
+    </div>
+
+
+    <!-- PROJECT MEMBERS -->
+
+    <div class="members">
+
+        <h2>Project Members</h2>
+
+        <ul>
+
+            {% for member in project.members.all %}
+
+                <li>
+                    {{ member.username }}
+                </li>
+
+            {% empty %}
+
+                <li>
+                    No members yet.
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+
+        {% if user == project.owner %}
+
+            <h3>Add Member</h3>
+
+            <form
+                method="POST"
+                action="{% url 'add_member' project.id %}"
+            >
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter username"
+                    required
+                >
+
+                <button type="submit">
+                    Add Member
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- PROJECT BOARD -->
+
+    <h2>Project Board</h2>
+
+
+    <div class="board">
+
+
+        <!-- TO DO -->
+
+        <div class="column">
+
+            <h2>To Do</h2>
+
+
+            {% for task in tasks %}
+
+                {% if task.status == "todo" %}
+
+                    <div class="task-card">
+
+                        <h3>
+                            {{ task.title }}
+                        </h3>
+
+                        <p>
+                            {{ task.description }}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            {{ task.get_status_display }}
+                        </p>
+
+                        <p>
+                            <strong>Assigned to:</strong>
+
+                            {% if task.assigned_to %}
+
+                                {{ task.assigned_to.username }}
+
+                            {% else %}
+
+                                Not assigned
+
+                            {% endif %}
+
+                        </p>
+
+
+                        {% if task.due_date %}
+
+                            <p>
+                                <strong>Due:</strong>
+                                {{ task.due_date }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <!-- STATUS UPDATE -->
+
+                        <form
+                            method="POST"
+                            action="{% url 'update_task_status' task.id %}"
+                            class="status-form"
+                        >
+
+                            {% csrf_token %}
+
+                            <select name="status">
+
+                                <option
+                                    value="todo"
+                                    selected
+                                >
+                                    To Do
+                                </option>
+
+                                <option
+                                    value="progress"
+                                >
+                                    In Progress
+                                </option>
+
+                                <option
+                                    value="done"
+                                >
+                                    Done
+                                </option>
+
+                            </select>
+
+                            <button type="submit">
+                                Update Status
+                            </button>
+
+                        </form>
+
+
+                        <!-- TASK DETAILS AND COMMENTS -->
+
+                        <br>
+
+                        <a href="{% url 'task_detail' task.id %}">
+                            <button>
+                                Open Task & Comments
+                            </button>
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- IN PROGRESS -->
+
+        <div class="column">
+
+            <h2>In Progress</h2>
+
+
+            {% for task in tasks %}
+
+                {% if task.status == "progress" %}
+
+                    <div class="task-card">
+
+                        <h3>
+                            {{ task.title }}
+                        </h3>
+
+                        <p>
+                            {{ task.description }}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            {{ task.get_status_display }}
+                        </p>
+
+                        <p>
+                            <strong>Assigned to:</strong>
+
+                            {% if task.assigned_to %}
+
+                                {{ task.assigned_to.username }}
+
+                            {% else %}
+
+                                Not assigned
+
+                            {% endif %}
+
+                        </p>
+
+
+                        {% if task.due_date %}
+
+                            <p>
+                                <strong>Due:</strong>
+                                {{ task.due_date }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <!-- STATUS UPDATE -->
+
+                        <form
+                            method="POST"
+                            action="{% url 'update_task_status' task.id %}"
+                            class="status-form"
+                        >
+
+                            {% csrf_token %}
+
+                            <select name="status">
+
+                                <option value="todo">
+                                    To Do
+                                </option>
+
+                                <option
+                                    value="progress"
+                                    selected
+                                >
+                                    In Progress
+                                </option>
+
+                                <option value="done">
+                                    Done
+                                </option>
+
+                            </select>
+
+                            <button type="submit">
+                                Update Status
+                            </button>
+
+                        </form>
+
+
+                        <!-- TASK DETAILS AND COMMENTS -->
+
+                        <br>
+
+                        <a href="{% url 'task_detail' task.id %}">
+                            <button>
+                                Open Task & Comments
+                            </button>
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- DONE -->
+
+        <div class="column">
+
+            <h2>Done</h2>
+
+
+            {% for task in tasks %}
+
+                {% if task.status == "done" %}
+
+                    <div class="task-card">
+
+                        <h3>
+                            {{ task.title }}
+                        </h3>
+
+                        <p>
+                            {{ task.description }}
+                        </p>
+
+                        <p>
+                            <strong>Status:</strong>
+                            {{ task.get_status_display }}
+                        </p>
+
+                        <p>
+                            <strong>Assigned to:</strong>
+
+                            {% if task.assigned_to %}
+
+                                {{ task.assigned_to.username }}
+
+                            {% else %}
+
+                                Not assigned
+
+                            {% endif %}
+
+                        </p>
+
+
+                        {% if task.due_date %}
+
+                            <p>
+                                <strong>Due:</strong>
+                                {{ task.due_date }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <!-- STATUS UPDATE -->
+
+                        <form
+                            method="POST"
+                            action="{% url 'update_task_status' task.id %}"
+                            class="status-form"
+                        >
+
+                            {% csrf_token %}
+
+                            <select name="status">
+
+                                <option value="todo">
+                                    To Do
+                                </option>
+
+                                <option value="progress">
+                                    In Progress
+                                </option>
+
+                                <option
+                                    value="done"
+                                    selected
+                                >
+                                    Done
+                                </option>
+
+                            </select>
+
+                            <button type="submit">
+                                Update Status
+                            </button>
+
+                        </form>
+
+
+                        <!-- TASK DETAILS AND COMMENTS -->
+
+                        <br>
+
+                        <a href="{% url 'task_detail' task.id %}">
+                            <button>
+                                Open Task & Comments
+                            </button>
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <br><br>
+
+
+    <!-- BACK TO DASHBOARD -->
+
+    <a href="{% url 'dashboard' %}">
+        Back to Dashboard
+    </a>
+
+
+</body>
+
+</html>
