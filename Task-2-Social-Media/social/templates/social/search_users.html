@@ -1,0 +1,318 @@
+{% extends 'social/base.html' %}
+
+{% block title %}
+Search Users - Connectly
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .search-page {
+        max-width: 750px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+
+    .search-header {
+        background: white;
+        padding: 25px 30px;
+        border-radius: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+        border: 1px solid #e8eaf0;
+    }
+
+    .search-header h2 {
+        margin: 0 0 18px;
+        color: #1c1e21;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid #d5d9e0;
+        border-radius: 9px;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: #1877f2;
+        box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.10);
+    }
+
+    .search-button {
+        border: none;
+        padding: 12px 20px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #1877f2, #6c5ce7);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .search-button:hover {
+        box-shadow: 0 5px 15px rgba(24, 119, 242, 0.25);
+    }
+
+    .results-title {
+        margin: 0 0 15px;
+        color: #333;
+        font-size: 18px;
+    }
+
+    .user-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: white;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        border-radius: 14px;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        transition: 0.2s ease;
+    }
+
+    .user-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .user-avatar {
+        width: 55px;
+        height: 55px;
+        min-width: 55px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1877f2, #6c5ce7);
+        color: white;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-info h3 {
+        margin: 0 0 4px;
+        color: #1c1e21;
+        font-size: 17px;
+    }
+
+    .user-info p {
+        margin: 0;
+        color: #65676b;
+        font-size: 13px;
+    }
+
+    .view-profile {
+        display: inline-block;
+        padding: 9px 15px;
+        border-radius: 8px;
+        background: #f0f2f5;
+        color: #1877f2;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .view-profile:hover {
+        background: #e4e6eb;
+    }
+
+    .empty-results {
+        background: white;
+        padding: 45px 25px;
+        text-align: center;
+        border-radius: 18px;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+
+    .empty-results h3 {
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .empty-results p {
+        color: #777;
+    }
+
+    @media (max-width: 600px) {
+
+        .search-header {
+            padding: 20px;
+        }
+
+        .search-form {
+            flex-direction: column;
+        }
+
+        .search-button {
+            width: 100%;
+        }
+
+        .user-card {
+            padding: 15px;
+        }
+
+        .view-profile {
+            padding: 8px 10px;
+        }
+
+    }
+
+</style>
+
+
+<div class="search-page">
+
+
+    <!-- Search Header -->
+
+    <div class="search-header">
+
+        <h2>
+            🔍 Search Users
+        </h2>
+
+        <form
+            method="GET"
+            action="{% url 'search_users' %}"
+            class="search-form"
+        >
+
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                placeholder="Search by username..."
+                class="search-input"
+                autocomplete="off"
+            >
+
+            <button
+                type="submit"
+                class="search-button"
+            >
+                🔍 Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    {% if query %}
+
+        <h3 class="results-title">
+            Search results for "{{ query }}"
+        </h3>
+
+
+        {% if users %}
+
+            {% for user in users %}
+
+                <div class="user-card">
+
+
+                    <!-- Avatar -->
+
+                    <div class="user-avatar">
+                        {{ user.username|first|upper }}
+                    </div>
+
+
+                    <!-- User Information -->
+
+                    <div class="user-info">
+
+                        <h3>
+                            {{ user.username }}
+                        </h3>
+
+                        <p>
+                            @{{ user.username }}
+                        </p>
+
+                    </div>
+
+
+                    <!-- Profile Button -->
+
+                    <a
+                        href="{% url 'user_profile' user.id %}"
+                        class="view-profile"
+                    >
+                        View Profile →
+                    </a>
+
+
+                </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <div class="empty-results">
+
+                <div class="empty-icon">
+                    😕
+                </div>
+
+                <h3>
+                    No users found
+                </h3>
+
+                <p>
+                    Try searching with a different username.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+
+        <div class="empty-results">
+
+            <div class="empty-icon">
+                👥
+            </div>
+
+            <h3>
+                Find People on Connectly
+            </h3>
+
+            <p>
+                Search for users by their username.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,276 @@
+{% extends 'social/base.html' %}
+
+{% block title %}
+Notifications - Connectly
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .notifications-page {
+        max-width: 750px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+
+    .notifications-header {
+        background: white;
+        padding: 25px 30px;
+        border-radius: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+        border: 1px solid #e8eaf0;
+    }
+
+    .notifications-header h2 {
+        margin: 0;
+        color: #1c1e21;
+    }
+
+    .notifications-header p {
+        margin: 7px 0 0;
+        color: #65676b;
+        font-size: 14px;
+    }
+
+    .notification-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: white;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        border-radius: 14px;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        transition: 0.2s ease;
+    }
+
+    .notification-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .notification-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1877f2, #6c5ce7);
+        color: white;
+        font-size: 21px;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-content strong {
+        color: #1c1e21;
+    }
+
+    .notification-content p {
+        margin: 4px 0;
+        color: #444;
+        line-height: 1.5;
+    }
+
+    .notification-time {
+        color: #888;
+        font-size: 12px;
+    }
+
+    .view-profile {
+        display: inline-block;
+        margin-top: 7px;
+        color: #1877f2;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .view-profile:hover {
+        text-decoration: underline;
+    }
+
+    .empty-notifications {
+        background: white;
+        padding: 50px 25px;
+        text-align: center;
+        border-radius: 18px;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+    }
+
+    .empty-notifications h3 {
+        margin-bottom: 8px;
+        color: #333;
+    }
+
+    .empty-notifications p {
+        color: #777;
+    }
+
+    @media (max-width: 600px) {
+
+        .notifications-header {
+            padding: 20px;
+        }
+
+        .notification-card {
+            padding: 15px;
+        }
+
+        .notification-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            font-size: 18px;
+        }
+
+    }
+
+</style>
+
+
+<div class="notifications-page">
+
+
+    <!-- Header -->
+
+    <div class="notifications-header">
+
+        <h2>
+            🔔 Notifications
+        </h2>
+
+        <p>
+            Stay updated with your latest activity
+        </p>
+
+    </div>
+
+
+    <!-- Notifications -->
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+            <div class="notification-card">
+
+
+                <!-- Icon -->
+
+                <div class="notification-icon">
+
+                    {% if notification.notification_type == "like" %}
+                        ❤️
+                    {% elif notification.notification_type == "follow" %}
+                        👤
+                    {% else %}
+                        🔔
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Content -->
+
+                <div class="notification-content">
+
+                    {% if notification.notification_type == "like" %}
+
+                        <p>
+                            <strong>
+                                @{{ notification.sender.username }}
+                            </strong>
+
+                            liked your post.
+                        </p>
+
+                    {% elif notification.notification_type == "follow" %}
+
+                        <p>
+                            <strong>
+                                @{{ notification.sender.username }}
+                            </strong>
+
+                            started following you.
+                        </p>
+
+                    {% else %}
+
+                        <p>
+                            <strong>
+                                @{{ notification.sender.username }}
+                            </strong>
+
+                            interacted with you.
+                        </p>
+
+                    {% endif %}
+
+
+                    <div class="notification-time">
+
+                        {{ notification.created_at|date:"d M Y, h:i A" }}
+
+                    </div>
+
+
+                    <!-- View Sender Profile -->
+
+                    <a
+                        href="{% url 'user_profile' notification.sender.id %}"
+                        class="view-profile"
+                    >
+                        View Profile →
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <!-- No Notifications -->
+
+        <div class="empty-notifications">
+
+            <div class="empty-icon">
+                🔕
+            </div>
+
+            <h3>
+                No notifications yet
+            </h3>
+
+            <p>
+                When someone follows you or likes your post,
+                you'll see it here.
+            </p>
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

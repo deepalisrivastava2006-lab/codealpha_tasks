@@ -1,0 +1,284 @@
+{% extends 'social/base.html' %}
+
+{% block title %}
+Edit Post - Connectly
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .edit-post-wrapper {
+        min-height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 15px;
+    }
+
+    .edit-post-card {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        padding: 30px;
+        border-radius: 18px;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .edit-post-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .edit-post-icon {
+        width: 65px;
+        height: 65px;
+        margin: 0 auto 15px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1877f2, #6c5ce7);
+        color: white;
+        font-size: 28px;
+    }
+
+    .edit-post-header h2 {
+        margin: 0 0 7px;
+        color: #1c1e21;
+    }
+
+    .edit-post-header p {
+        margin: 0;
+        color: #65676b;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .post-textarea {
+        width: 100%;
+        min-height: 140px;
+        box-sizing: border-box;
+        padding: 13px;
+        border: 1px solid #d5d9e0;
+        border-radius: 10px;
+        font-size: 15px;
+        font-family: inherit;
+        resize: vertical;
+        outline: none;
+    }
+
+    .post-textarea:focus {
+        border-color: #1877f2;
+        box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.10);
+    }
+
+    .file-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        border: 1px solid #d5d9e0;
+        border-radius: 9px;
+        background: #f8f9fa;
+        cursor: pointer;
+    }
+
+    .current-image {
+        margin-top: 12px;
+    }
+
+    .current-image img {
+        width: 100%;
+        max-height: 350px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #e8eaf0;
+    }
+
+    .current-image p {
+        margin: 7px 0 0;
+        color: #777;
+        font-size: 12px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .update-button,
+    .cancel-button {
+        flex: 1;
+        padding: 12px;
+        border-radius: 9px;
+        text-align: center;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .update-button {
+        border: none;
+        background: linear-gradient(135deg, #1877f2, #6c5ce7);
+        color: white;
+    }
+
+    .update-button:hover {
+        box-shadow: 0 5px 15px rgba(24, 119, 242, 0.25);
+    }
+
+    .cancel-button {
+        background: #f0f2f5;
+        color: #333;
+    }
+
+    .cancel-button:hover {
+        background: #e4e6eb;
+    }
+
+    @media (max-width: 600px) {
+
+        .edit-post-card {
+            padding: 25px 18px;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+    }
+
+</style>
+
+
+<div class="edit-post-wrapper">
+
+    <div class="edit-post-card">
+
+
+        <!-- Header -->
+
+        <div class="edit-post-header">
+
+            <div class="edit-post-icon">
+                ✏️
+            </div>
+
+            <h2>
+                Edit Your Post
+            </h2>
+
+            <p>
+                Update your post content or image
+            </p>
+
+        </div>
+
+
+        <!-- Edit Post Form -->
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- Post Content -->
+
+            <div class="form-group">
+
+                <label for="content">
+                    Post Content
+                </label>
+
+                <textarea
+                    id="content"
+                    name="content"
+                    class="post-textarea"
+                    placeholder="Write something..."
+                >{{ post.content }}</textarea>
+
+            </div>
+
+
+            <!-- Image -->
+
+            <div class="form-group">
+
+                <label for="image">
+                    Change Image
+                </label>
+
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    class="file-input"
+                    accept="image/*"
+                >
+
+
+                {% if post.image %}
+
+                    <div class="current-image">
+
+                        <img
+                            src="{{ post.image.url }}"
+                            alt="Current Post Image"
+                        >
+
+                        <p>
+                            Current post image
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Buttons -->
+
+            <div class="button-group">
+
+                <button
+                    type="submit"
+                    class="update-button"
+                >
+                    💾 Update Post
+                </button>
+
+                <a
+                    href="{% url 'home' %}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

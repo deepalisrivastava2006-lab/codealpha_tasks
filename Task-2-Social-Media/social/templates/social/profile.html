@@ -1,0 +1,481 @@
+{% extends 'social/base.html' %}
+
+{% block title %}
+My Profile - Connectly
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .profile-page {
+        max-width: 850px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+
+    /* Profile Header */
+
+    .profile-header {
+        background: white;
+        border-radius: 18px;
+        padding: 35px;
+        text-align: center;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e8eaf0;
+    }
+
+    .profile-picture {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .default-avatar {
+        width: 110px;
+        height: 110px;
+        margin: 0 auto;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1877f2, #6c5ce7);
+        color: white;
+        font-size: 45px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-header h2 {
+        margin: 15px 0 5px;
+        font-size: 27px;
+        color: #1c1e21;
+    }
+
+    .username {
+        color: #65676b;
+        font-size: 14px;
+    }
+
+    .bio {
+        max-width: 550px;
+        margin: 15px auto;
+        color: #444;
+        line-height: 1.6;
+    }
+
+    /* Profile Stats */
+
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+        margin: 25px 0;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 22px;
+        font-weight: 700;
+        color: #1c1e21;
+    }
+
+    .stat-label {
+        color: #65676b;
+        font-size: 13px;
+    }
+
+    /* Edit Profile */
+
+    .edit-profile-btn {
+        display: inline-block;
+        padding: 10px 22px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #1877f2, #6c5ce7);
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .edit-profile-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(24, 119, 242, 0.25);
+    }
+
+    /* Posts */
+
+    .posts-section {
+        margin-top: 25px;
+    }
+
+    .posts-section h3 {
+        margin-bottom: 15px;
+        color: #1c1e21;
+    }
+
+    .post-card {
+        background: white;
+        padding: 20px;
+        margin-bottom: 18px;
+        border-radius: 14px;
+        border: 1px solid #e8eaf0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .post-user {
+        font-weight: 700;
+        color: #1c1e21;
+    }
+
+    .post-date {
+        color: #888;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    .post-content {
+        margin: 14px 0;
+        line-height: 1.6;
+        color: #333;
+    }
+
+    .post-image {
+        width: 100%;
+        max-height: 450px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-top: 8px;
+    }
+
+    /* Like Button */
+
+    .like-button {
+        border: none;
+        background: #f0f2f5;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+    .like-button:hover {
+        background: #e4e6eb;
+    }
+
+    /* No Posts */
+
+    .empty-posts {
+        background: white;
+        padding: 30px;
+        text-align: center;
+        border-radius: 14px;
+        color: #777;
+        border: 1px solid #e8eaf0;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 600px) {
+
+        .profile-header {
+            padding: 25px 18px;
+        }
+
+        .profile-stats {
+            gap: 25px;
+        }
+
+        .profile-picture,
+        .default-avatar {
+            width: 90px;
+            height: 90px;
+        }
+
+        .default-avatar {
+            font-size: 35px;
+        }
+
+    }
+
+</style>
+
+
+<div class="profile-page">
+
+
+    <!-- Profile Header -->
+
+    <div class="profile-header">
+
+
+        <!-- Profile Picture -->
+
+        {% if profile.profile_picture %}
+
+            <img
+                src="{{ profile.profile_picture.url }}"
+                alt="Profile Picture"
+                class="profile-picture"
+            >
+
+        {% else %}
+
+            <div class="default-avatar">
+                👤
+            </div>
+
+        {% endif %}
+
+
+        <!-- Username -->
+
+        <h2>
+            {{ request.user.username }}
+        </h2>
+
+        <div class="username">
+            @{{ request.user.username }}
+        </div>
+
+
+        <!-- Bio -->
+
+        {% if profile.bio %}
+
+            <p class="bio">
+                {{ profile.bio }}
+            </p>
+
+        {% else %}
+
+            <p class="bio">
+                No bio added yet.
+            </p>
+
+        {% endif %}
+
+
+        <!-- Profile Statistics -->
+
+        <div class="profile-stats">
+
+
+            <div class="stat">
+
+                <span class="stat-number">
+                    {{ posts_with_like_status|length }}
+                </span>
+
+                <span class="stat-label">
+                    Posts
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <span class="stat-number">
+                    {{ followers_count }}
+                </span>
+
+                <span class="stat-label">
+                    Followers
+                </span>
+
+            </div>
+
+
+            <div class="stat">
+
+                <span class="stat-number">
+                    {{ following_count }}
+                </span>
+
+                <span class="stat-label">
+                    Following
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Edit Profile Button -->
+
+        <a
+            href="{% url 'edit_profile' %}"
+            class="edit-profile-btn"
+        >
+            ✏️ Edit Profile
+        </a>
+
+
+    </div>
+
+
+    <!-- My Posts -->
+
+    <div class="posts-section">
+
+
+        <h3>
+            📸 My Posts
+        </h3>
+
+
+        {% if posts_with_like_status %}
+
+
+            {% for post, is_liked in posts_with_like_status %}
+
+
+                <div class="post-card">
+
+
+                    <!-- Post Information -->
+
+                    <div>
+
+                        <span class="post-user">
+                            @{{ post.user.username }}
+                        </span>
+
+                        <span class="post-date">
+                            {{ post.created_at|date:"d M Y, h:i A" }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- Post Text -->
+
+                    {% if post.content %}
+
+                        <div class="post-content">
+                            {{ post.content }}
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- Post Image -->
+
+                    {% if post.image %}
+
+                        <img
+                            src="{{ post.image.url }}"
+                            alt="Post Image"
+                            class="post-image"
+                        >
+
+                    {% endif %}
+
+
+                    <br>
+
+
+                    <!-- Like Button -->
+
+                    <button
+                        type="button"
+                        class="like-button"
+                        data-post-id="{{ post.id }}"
+                        onclick="likePost(this)"
+                    >
+
+                        {% if is_liked %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+
+                        <span>
+                            {{ post.likes.count }}
+                        </span>
+
+                    </button>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <!-- No Posts -->
+
+            <div class="empty-posts">
+
+                <p>
+                    📭 You haven't created any posts yet.
+                </p>
+
+                <p>
+                    Go to Home and create your first post!
+                </p>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+
+
+<!-- Like JavaScript -->
+
+<script>
+
+function likePost(button) {
+
+    const postId = button.dataset.postId;
+
+    fetch(`/like/${postId}/`)
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.liked) {
+
+                button.innerHTML =
+                    `❤️ <span>${data.likes_count}</span>`;
+
+            } else {
+
+                button.innerHTML =
+                    `🤍 <span>${data.likes_count}</span>`;
+
+            }
+
+        })
+
+        .catch(error => {
+
+            console.log("Like error:", error);
+
+        });
+
+}
+
+</script>
+
+
+{% endblock %}

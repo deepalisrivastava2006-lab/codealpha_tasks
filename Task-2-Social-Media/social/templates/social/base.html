@@ -1,0 +1,821 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            Connectly
+        {% endblock %}
+    </title>
+
+
+    <style>
+
+        /* =========================================
+           GLOBAL
+           ========================================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f0f4ff,
+                    #f8f9ff
+                );
+
+            color: #1c1e21;
+
+            min-height: 100vh;
+        }
+
+
+        /* =========================================
+           NAVBAR
+           ========================================= */
+
+        .navbar {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1877f2,
+                    #6c5ce7
+                );
+
+            color: white;
+
+            padding: 14px 30px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 4px 15px
+                rgba(24, 119, 242, 0.25);
+        }
+
+
+        /* =========================================
+           LOGO
+           ========================================= */
+
+        .logo {
+
+            font-size: 27px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.5px;
+
+            white-space: nowrap;
+        }
+
+
+        .logo a {
+
+            color: white;
+
+            text-decoration: none;
+
+            transition: 0.2s ease;
+        }
+
+
+        .logo a:hover {
+
+            opacity: 0.85;
+
+            text-decoration: none;
+        }
+
+
+        /* =========================================
+           SEARCH BAR
+           ========================================= */
+
+        .nav-search {
+
+            display: flex;
+
+            align-items: center;
+
+            flex: 1;
+
+            max-width: 350px;
+
+            margin: 0 auto;
+        }
+
+
+        .nav-search input {
+
+            width: 100%;
+
+            padding: 10px 15px;
+
+            border: none;
+
+            border-radius: 22px 0 0 22px;
+
+            outline: none;
+
+            font-size: 14px;
+
+            background: white;
+
+            color: #333;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        .nav-search input::placeholder {
+
+            color: #888;
+        }
+
+
+        .nav-search button {
+
+            padding: 10px 15px;
+
+            border: none;
+
+            border-radius: 0 22px 22px 0;
+
+            background: white;
+
+            color: #1877f2;
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+            transition: 0.2s ease;
+        }
+
+
+        .nav-search button:hover {
+
+            background: #f0f2f5;
+
+        }
+
+
+        /* =========================================
+           NAVIGATION LINKS
+           ========================================= */
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            justify-content: center;
+        }
+
+
+        .nav-links a {
+
+            color: white;
+
+            text-decoration: none;
+
+            font-weight: 600;
+
+            font-size: 14px;
+
+            padding: 8px 11px;
+
+            border-radius: 8px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .nav-links a:hover {
+
+            background:
+                rgba(255, 255, 255, 0.15);
+
+            text-decoration: none;
+
+            transform: translateY(-1px);
+        }
+
+
+        .welcome-text {
+
+            font-weight: 700;
+
+            font-size: 14px;
+
+            padding: 8px 5px;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================
+           NOTIFICATION BADGE
+           ========================================= */
+
+        .notification-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-width: 20px;
+
+            height: 20px;
+
+            padding: 2px 6px;
+
+            background: #ff3b30;
+
+            color: white;
+
+            font-size: 11px;
+
+            font-weight: bold;
+
+            border-radius: 50px;
+
+            margin-left: 3px;
+
+            vertical-align: middle;
+        }
+
+
+        /* =========================================
+           MAIN CONTAINER
+           ========================================= */
+
+        .container {
+
+            width: 92%;
+
+            max-width: 1000px;
+
+            margin: 30px auto;
+
+            min-height: calc(100vh - 180px);
+        }
+
+
+        /* =========================================
+           GENERAL CARD
+           ========================================= */
+
+        .card {
+
+            background: rgba(255, 255, 255, 0.96);
+
+            padding: 22px;
+
+            margin-bottom: 22px;
+
+            border-radius: 15px;
+
+            border:
+                1px solid
+                rgba(0, 0, 0, 0.05);
+
+            box-shadow:
+                0 5px 20px
+                rgba(0, 0, 0, 0.06);
+        }
+
+
+        /* =========================================
+           HEADINGS
+           ========================================= */
+
+        h1,
+        h2,
+        h3,
+        h4 {
+
+            margin-bottom: 12px;
+
+            color: #1c1e21;
+        }
+
+
+        h1 {
+            font-size: 28px;
+        }
+
+
+        h2 {
+            font-size: 23px;
+        }
+
+
+        h3 {
+            font-size: 19px;
+        }
+
+
+        /* =========================================
+           BUTTONS
+           ========================================= */
+
+        button {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1877f2,
+                    #4267e8
+                );
+
+            color: white;
+
+            border: none;
+
+            padding: 9px 17px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        button:hover {
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 4px 10px
+                rgba(24, 119, 242, 0.25);
+        }
+
+
+        button:active {
+
+            transform: translateY(0);
+        }
+
+
+        /* =========================================
+           INPUTS
+           ========================================= */
+
+        input,
+        textarea {
+
+            border:
+                1px solid #d5d9e0;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        input:focus,
+        textarea:focus {
+
+            border-color: #1877f2;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(24, 119, 242, 0.10);
+        }
+
+
+        /* =========================================
+           LINKS
+           ========================================= */
+
+        a {
+
+            color: #1877f2;
+
+        }
+
+
+        a:hover {
+
+            color: #0d65d9;
+
+        }
+
+
+        /* =========================================
+           IMAGES
+           ========================================= */
+
+        img {
+
+            max-width: 100%;
+
+            display: block;
+        }
+
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+
+        .footer {
+
+            text-align: center;
+
+            padding: 25px 15px;
+
+            color: #65676b;
+
+            font-size: 13px;
+
+            margin-top: 30px;
+
+            border-top:
+                1px solid #e5e7eb;
+        }
+
+
+        /* =========================================
+           SCROLLBAR
+           ========================================= */
+
+        ::-webkit-scrollbar {
+
+            width: 8px;
+        }
+
+
+        ::-webkit-scrollbar-track {
+
+            background: #f0f2f5;
+        }
+
+
+        ::-webkit-scrollbar-thumb {
+
+            background: #b8c2d1;
+
+            border-radius: 10px;
+        }
+
+
+        ::-webkit-scrollbar-thumb:hover {
+
+            background: #8f9bad;
+        }
+
+
+        /* =========================================
+           TABLET
+           ========================================= */
+
+        @media (max-width: 900px) {
+
+            .navbar {
+
+                flex-wrap: wrap;
+
+                justify-content: center;
+
+                padding: 14px 20px;
+            }
+
+
+            .logo {
+
+                order: 1;
+            }
+
+
+            .nav-search {
+
+                order: 2;
+
+                flex-basis: 100%;
+
+                max-width: 500px;
+
+                margin: 5px auto;
+            }
+
+
+            .nav-links {
+
+                order: 3;
+            }
+
+        }
+
+
+        /* =========================================
+           MOBILE
+           ========================================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+
+                flex-direction: column;
+
+                padding: 15px 12px;
+
+                gap: 10px;
+            }
+
+
+            .logo {
+
+                font-size: 24px;
+            }
+
+
+            .nav-search {
+
+                width: 100%;
+
+                max-width: none;
+            }
+
+
+            .nav-search input {
+
+                width: 100%;
+            }
+
+
+            .nav-links {
+
+                width: 100%;
+
+                gap: 5px;
+            }
+
+
+            .nav-links a {
+
+                font-size: 13px;
+
+                padding: 7px 8px;
+            }
+
+
+            .welcome-text {
+
+                width: 100%;
+
+                text-align: center;
+
+                font-size: 13px;
+            }
+
+
+            .container {
+
+                width: 95%;
+
+                margin: 20px auto;
+            }
+
+
+            .card {
+
+                padding: 17px;
+
+                border-radius: 12px;
+            }
+
+
+            h1 {
+
+                font-size: 24px;
+            }
+
+
+            h2 {
+
+                font-size: 21px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         NAVBAR
+         ========================================= -->
+
+    <nav class="navbar">
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            <a href="{% url 'home' %}">
+                Connectly
+            </a>
+
+        </div>
+
+
+        {% if request.user.is_authenticated %}
+
+
+            <!-- SEARCH -->
+
+            <form
+                method="GET"
+                action="{% url 'search_users' %}"
+                class="nav-search"
+            >
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Search users..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="submit"
+                    title="Search"
+                >
+                    🔎
+                </button>
+
+            </form>
+
+
+            <!-- NAVIGATION -->
+
+            <div class="nav-links">
+
+
+                <span class="welcome-text">
+
+                    Hello, {{ request.user.username }}
+
+                </span>
+
+
+                <a href="{% url 'home' %}">
+                    🏠 Home
+                </a>
+
+
+                <a href="{% url 'profile' %}">
+                    👤 Profile
+                </a>
+
+
+                <a href="{% url 'notifications' %}">
+
+                    🔔 Notifications
+
+                    {% if unread_notifications > 0 %}
+
+                        <span
+                            class="notification-badge"
+                        >
+                            {{ unread_notifications }}
+                        </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <a href="{% url 'logout' %}">
+                    🚪 Logout
+                </a>
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- GUEST NAVIGATION -->
+
+            <div class="nav-links">
+
+                <a href="{% url 'login' %}">
+                    🔐 Login
+                </a>
+
+
+                <a href="{% url 'register' %}">
+                    📝 Register
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+    </nav>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+         ========================================= -->
+
+    <main class="container">
+
+        {% block content %}
+
+        {% endblock %}
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+         ========================================= -->
+
+    <footer class="footer">
+
+        <p>
+
+            © 2026 Connectly |
+
+            CodeAlpha Internship Project
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>
